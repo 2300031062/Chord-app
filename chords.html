@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4 Family Chords Finder</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0f0f0f;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: #1c1c1c;
+        padding: 25px;
+        border-radius: 12px;
+        width: 380px;
+        text-align: center;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 12px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: none;
+    }
+
+    .result {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .chord-box {
+        background: #2a2a2a;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .chord-name {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .chord-notes {
+        margin-top: 6px;
+        font-size: 15px;
+        color: #ccc;
+    }
+
+    .footer {
+        margin-top: 25px;
+        font-size: 13px;
+        color: #aaa;
+        text-align: center;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🎹 4 Family Chords</h2>
+
+    <!-- Root Note -->
+    <select id="root" onchange="updateChords()">
+        <option value="">Select Root Note</option>
+        <option value="C">C</option>
+        <option value="C#">C#</option>
+        <option value="D">D</option>
+        <option value="D#">D#</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="F#">F#</option>
+        <option value="G">G</option>
+        <option value="G#">G#</option>
+        <option value="A">A</option>
+        <option value="A#">A#</option>
+        <option value="B">B</option>
+    </select>
+
+    <!-- Scale Type -->
+    <select id="scale" onchange="updateChords()">
+        <option value="">Select Scale</option>
+        <option value="major">Major</option>
+        <option value="minor">Minor</option>
+    </select>
+
+    <div class="result" id="output"></div>
+
+    <div class="footer">
+        Developed by Hemanth Andey
+    </div>
+</div>
+
+<script>
+const notes = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+function getNote(note, steps) {
+    return notes[(notes.indexOf(note) + steps) % 12];
+}
+
+// Build chord notes
+function buildChord(root, type) {
+    if (type === "major") {
+        return [root, getNote(root, 4), getNote(root, 7)];
+    } else {
+        return [root, getNote(root, 3), getNote(root, 7)];
+    }
+}
+
+function updateChords() {
+    const root = document.getElementById("root").value;
+    const scale = document.getElementById("scale").value;
+    const output = document.getElementById("output");
+
+    output.innerHTML = "";
+    if (!root || !scale) return;
+
+    let chords = [];
+
+    if (scale === "major") {
+        chords = [
+            { name: root, type: "major" },
+            { name: getNote(root, 9) + "m", root: getNote(root, 9), type: "minor" },
+            { name: getNote(root, 5), type: "major" },
+            { name: getNote(root, 7), type: "major" }
+        ];
+    } else {
+        chords = [
+            { name: root + "m", root: root, type: "minor" },
+            { name: getNote(root, 8), type: "major" },
+            { name: getNote(root, 3), type: "major" },
+            { name: getNote(root, 10), type: "major" }
+        ];
+    }
+
+    chords.forEach(ch => {
+        const chordRoot = ch.root || ch.name.replace("m", "");
+        const notesPlayed = buildChord(chordRoot, ch.type).join(" – ");
+
+        output.innerHTML += `
+            <div class="chord-box">
+                <div class="chord-name">${ch.name}</div>
+                <div class="chord-notes">Notes: ${notesPlayed}</div>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
